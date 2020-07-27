@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="weather-block">
+          <div id="doc"></div>
+          <p>Temperature: <span id="temp"></span></p>
+          <p>Humidity: <span id="humidity"></span></p>
+          <p>Max temperature: <span id="max"></span></p> 
+          <p>Min temperature: <span id="min"></span></p>  
+          <p>
+           <button >Celsius</button>
+           <button >Fahrenheit</button>  
+          </p> 
+
+        </div>
+
+        <video id="myVideo"  loop="loop"  autoplay muted="" width="480" >
+            <source id="source" type="video/mp4">
+            Your browser doesn't support HTML5 video tag.
+        </video>
+
+        <script src="weather.js" async defer></script>
+    </body>
+</html>
