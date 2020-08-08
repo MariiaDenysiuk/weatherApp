@@ -1,52 +1,88 @@
-(function () {
-    let x = document.getElementById("doc");
-    let temp = document.getElementById("temp");
-    let humidity = document.getElementById("humidity");
-    let button = document.getElementsByTagName("button");
-    let video = document.getElementById("myVideo");
-    let max = document.getElementById("max");
-    let min = document.getElementById("min");
-    let currentTemp = 0;
-    var weather = {'Clouds': "./video/cloud.mp4", "Rain": "./video/rain.mp4", "Clear": "./video/sun.mp4"}
+let TemperatureManager = (function() {
+    function TemperatureManager() {};
+    TemperatureManager.prototype.farangeit = function(temp) {
+        return (temp * 9/5) + 32;
+    }
+    return TemperatureManager;
+}());
 
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
+let DocumentApi = (function () {
+    function DocumentApi() {
+        this.doc = document.getElementById("doc");
+        this.temp = document.getElementById("temp");
+        this.humidity = document.getElementById("humidity");
+        this.button = document.getElementsByTagName("button");
+        this.video = document.getElementById("myVideo");
+        this.max = document.getElementById("max");
+        this.min = document.getElementById("min");
+    }
+    return DocumentApi;
+})();
+
+let WeatherApi = (function() {
+    let weather = {};
+    let documentApi;
+
+    function WeatherApi(documentAp) {
+        documentApi = documentAp;
+    };
+
+    WeatherApi.prototype.applyWeather = function(type, link) {
+        weather[type] = link;
     }
 
-    function showPosition(position) {
-        const link = 'https://fcc-weather-api.glitch.me/' + '/api/current?lat='+position.coords.latitude.toFixed()+'&lon='+position.coords.longitude.toFixed();
-        
+    WeatherApi.prototype.showPosition = function(position) {
+        const link = appSettings.domain() + '/api/current?lat='+position.coords.latitude.toFixed()+'&lon='+position.coords.longitude.toFixed();
+       
         fetch(link).then((response) => response.json()).then(
             (response) => {
                 const t = response.main.temp;  
-                temp.innerHTML = t;
-                currentTemp = t;
-            
-                humidity.innerHTML = response.main.humidity
-                max.innerHTML = response.main.temp_max;
-                min.innerHTML = response.main.temp_min;
-
-                video.src = weather[response.weather[0].main];
+                documentApi.temp.innerHTML = t;
+                documentApi.currentTemp = t;
+                documentApi.humidity.innerHTML = response.main.humidity
+                documentApi.max.innerHTML = response.main.temp_max;
+                documentApi.min.innerHTML = response.main.temp_min;
+                documentApi.video.src = weather[response.weather[0].main];
             }
         )
     }
+    return WeatherApi;
+}());
 
-    button[0].addEventListener("click", function(event) {
+let LocationManager = (function() {
+    let weatherApi;
+    function LocationManager(weatherAp) {
+       weatherApi = weatherAp;
+    }
+
+    LocationManager.prototype.getLocation = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(weatherApi.showPosition);
+        } else {
+            doc.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+    return LocationManager;
+}());
+
+let EventListeners = (function(){
+    let documentApi = new DocumentApi();
+    let temperatureManager = new TemperatureManager();
+
+    documentApi.button[0].addEventListener("click", function(event) {
         temp.innerHTML = currentTemp;  
     });
 
-    button[1].addEventListener("click", function(event) {
-        const farang = farangeit(currentTemp);
+    documentApi.button[1].addEventListener("click", function(event) {
+        const farang = temperatureManager.farangeit(currentTemp);
         temp.innerHTML = farang;
     });
+}());
 
-    function farangeit(temp) {
-        return (temp * 9/5) + 32;
-    }
-
-    getLocation();
-})();
+const doucmentApi1 = new DocumentApi();
+const weatherApi1 = new WeatherApi(doucmentApi1);
+const location1 = new LocationManager(weatherApi1);
+weatherApi1.applyWeather('Clouds',"./video/cloud.mp4");
+weatherApi1.applyWeather('Rain',"./video/rain.mp4");
+weatherApi1.applyWeather('Clear',"./video/sun.mp4");
+location1.getLocation();
